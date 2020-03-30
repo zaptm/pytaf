@@ -196,10 +196,11 @@ class TAF(object):
     def _parse_wind(self, string):
         wind_pattern = """
             (?<= \s )
-            (?P<direction> (\d{3}|VRB)) # Three digits or VRB
-            (?P<speed> \d{2,3})         # Next two digits are speed in knots
-            (G(?P<gust> \d{2,3})){0,1}  # Optional gust data (Gxx)
-            (?P<unit> KT|MPS)           # Knots or meters per second
+            (?P<direction> (\d{3}|VRB))                              # Three digits or VRB
+            (?P<speed> \d{2,3})                                      # Next two digits are speed in knots
+            (G(?P<gust> \d{2,3})){0,1}                               # Optional gust data (Gxx)
+            (?P<unit> KT|MPS)                                        # Knots or meters per second
+            (\s(?P<variable_from>\d{3})V(?P<variable_to>\d{3})){0,1} # Optional variable wind range (xxxVyyy)
             (?= \s|$ )
         """
 
