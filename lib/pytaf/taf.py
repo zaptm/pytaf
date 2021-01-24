@@ -151,11 +151,12 @@ class TAF(object):
             group["header"] = self._parse_group_header(string)
 
         if self._taf_header['form'] == "metar":
+            if parse_trends:
+                string, group["trends"] = self._parse_metar_trends(string)
+
             group["temperature"] = self._parse_temperature(string)
             group["pressure"] = self._parse_pressure(string)
 
-            if parse_trends:
-                group["trends"] = self._parse_metar_trends(string)
 
         group["wind"] = self._parse_wind(string)
         group["visibility"] = self._parse_visibility(string)
@@ -409,10 +410,15 @@ class TAF(object):
             return(None)
 
     def _parse_metar_trends(self, string):
-        trend_pattern = r"(?P<type>FM|PROB|TEMPO|BECMG)(?P<trend>\s+.*?)(?P<rem>(?:FM|PROB|TEMPO|BECMG|$).*)"
+        trend_pattern = r"^(?P<obs>.*?)(?P<type>FM|PROB|TEMPO|BECMG)(?P<trend>\s+.*?)(?P<rem>(?:FM|PROB|TEMPO|BECMG|$).*)"
 
         trend_list  = list()
         trend_match = re.search(trend_pattern, string, re.VERBOSE)
+
+        if trend_match:
+            observation = trend_match.group("obs")
+        else:
+            observation = string
 
         while trend_match:
             trend_dict = trend_match.groupdict()
@@ -426,7 +432,7 @@ class TAF(object):
 
             trend_match = re.search(trend_pattern, trend_dict["rem"], re.VERBOSE)
 
-        return trend_list
+        return observation, trend_list
 
     # TODO: Calculate relative/absolute humidity
     # Nice-to-have - Not present in a METAR/TAF string, but it can be calculated by air temperature and dewpoint
