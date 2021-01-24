@@ -377,10 +377,10 @@ class TAF(object):
         temperature_pattern = r"""
             (?<= \s )
             (?P<air_prefix> M?)
-            (?P<air> \d{2})
+            (?P<air> \d{1,2})
             /
             (?P<dewpoint_prefix> M?)
-            (?P<dewpoint> \d{2})
+            (?P<dewpoint> \d{1,2})
             (?= \s|$)
         """
 
