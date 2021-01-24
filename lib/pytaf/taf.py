@@ -144,7 +144,7 @@ class TAF(object):
 
         return(group_list)
 
-    def _parse_group(self, string):
+    def _parse_group(self, string, parse_trends = True):
         group = {}
 
         if self._taf_header['form'] == "taf":
@@ -153,7 +153,9 @@ class TAF(object):
         if self._taf_header['form'] == "metar":
             group["temperature"] = self._parse_temperature(string)
             group["pressure"] = self._parse_pressure(string)
-            group["trends"] = self._parse_metar_trends(string)
+
+            if parse_trends:
+                group["trends"] = self._parse_metar_trends(string)
 
         group["wind"] = self._parse_wind(string)
         group["visibility"] = self._parse_visibility(string)
@@ -407,14 +409,14 @@ class TAF(object):
             return(None)
 
     def _parse_metar_trends(self, string):
-        trend_pattern = r"(?P<type>FM|PROB|TEMPO|BECMG)\s+(?P<trend>.*?)(?P<rem>(?:FM|PROB|TEMPO|BECMG|$).*)"
+        trend_pattern = r"(?P<type>FM|PROB|TEMPO|BECMG)(?P<trend>\s+.*?)(?P<rem>(?:FM|PROB|TEMPO|BECMG|$).*)"
 
         trend_list  = list()
         trend_match = re.search(trend_pattern, string, re.VERBOSE)
 
         while trend_match:
             trend_dict = trend_match.groupdict()
-            trend = self._parse_group(trend_dict["trend"])
+            trend = self._parse_group(trend_dict["trend"], parse_trends = False)
             trend["header"] = {"type": trend_dict["type"]}
 
             trend_list.append(trend)
