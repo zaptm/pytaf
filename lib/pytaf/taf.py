@@ -153,7 +153,7 @@ class TAF(object):
         if self._taf_header['form'] == "metar":
             group["temperature"] = self._parse_temperature(string)
             group["pressure"] = self._parse_pressure(string)
-            group["trend"] = self._parse_metar_trend(string)
+            group["trends"] = self._parse_metar_trends(string)
 
         group["wind"] = self._parse_wind(string)
         group["visibility"] = self._parse_visibility(string)
@@ -406,7 +406,7 @@ class TAF(object):
         else:
             return(None)
 
-    def _parse_metar_trend(self, string):
+    def _parse_metar_trends(self, string):
         trend_pattern = r"(?P<type>FM|PROB|TEMPO|BECMG)\s+(?P<trend>.*?)(?P<rem>(?:FM|PROB|TEMPO|BECMG|$).*)"
 
         trend_list  = list()
