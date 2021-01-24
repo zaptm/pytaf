@@ -391,10 +391,9 @@ class TAF(object):
             return(None)
 
     def _parse_pressure(self, string):
-        # FIXME: Any other possible values than 'Q' as altimeter setting?
         pressure_pattern = r"""
             (?<= \s )
-            (?P<altimeter_setting> Q)
+            (?P<altimeter_setting> [QA])
             (?P<athm_pressure> \d{4})
             (?= \s|$)
         """
